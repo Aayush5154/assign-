@@ -36,20 +36,10 @@ import EmptyState from '@/components/common/EmptyState';
 import CategoryFilters from '@/components/dashboard/CategoryFilters';
 import { useMoviesList, useNewsList, useSocialList } from '@/lib/api/client';
 
-function DemoNotice({ source }: { source: 'live' | 'demo' }) {
-  if (source === 'live') return null;
-  return (
-    <p className="mb-3 rounded-lg border border-border bg-[var(--hover)] px-3 py-2 text-xs text-secondary" role="status">
-      Demonstration data — configure API keys in <code className="font-mono">.env.local</code> for live content.
-    </p>
-  );
-}
-
 const PersonalizedNewsWidget = memo(function PersonalizedNewsWidget({ category }: { category: string }) {
-  const { items, loading, error, retry, source } = useNewsList(category);
+  const { items, loading, error, retry } = useNewsList(category);
   return (
-    <div className="rounded-card border border-border bg-surface p-4">
-      <DemoNotice source={source} />
+    <div className="rounded-card border border-border bg-card p-5 shadow-card">
       {loading ? (
         <GridSkeleton count={3} />
       ) : error && items.length === 0 ? (
@@ -57,24 +47,25 @@ const PersonalizedNewsWidget = memo(function PersonalizedNewsWidget({ category }
       ) : items.length === 0 ? (
         <EmptyState title="No stories" message="No stories for this interest right now." />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.slice(0, 6).map((a) => (
             <NewsCard key={a.id} article={a} />
           ))}
         </div>
       )}
-      <Link href="/news" className="mt-3 block text-sm font-semibold text-accent hover:opacity-90">
-        More news →
-      </Link>
+      <div className="mt-4 flex justify-end">
+        <Link href="/news" className="text-xs font-semibold text-accent hover:underline">
+          View all news →
+        </Link>
+      </div>
     </div>
   );
 });
 
 const TrendingMoviesWidget = memo(function TrendingMoviesWidget() {
-  const { items, loading, error, retry, source } = useMoviesList('trending');
+  const { items, loading, error, retry } = useMoviesList('trending');
   return (
-    <div className="rounded-card border border-border bg-surface p-4">
-      <DemoNotice source={source} />
+    <div className="rounded-card border border-border bg-card p-5 shadow-card">
       {loading ? (
         <GridSkeleton count={3} />
       ) : error && items.length === 0 ? (
@@ -82,16 +73,16 @@ const TrendingMoviesWidget = memo(function TrendingMoviesWidget() {
       ) : items.length === 0 ? (
         <EmptyState title="No movies" message="No trending movies right now." />
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {items.slice(0, 6).map((m) => (
             <MovieCard key={m.id} movie={m} />
           ))}
         </div>
       )}
-      <div className="mt-3 flex items-center justify-between">
-        <p className="text-[11px] text-secondary">Data by TMDB</p>
-        <Link href="/movies" className="text-sm font-semibold text-accent hover:opacity-90">
-          More movies →
+      <div className="mt-4 flex items-center justify-between">
+        <p className="text-[11px] text-secondary/60">Data by TMDB</p>
+        <Link href="/movies" className="text-xs font-semibold text-accent hover:underline">
+          View all movies →
         </Link>
       </div>
     </div>
@@ -101,10 +92,7 @@ const TrendingMoviesWidget = memo(function TrendingMoviesWidget() {
 const SocialFeedWidget = memo(function SocialFeedWidget({ category }: { category: string | null }) {
   const { items, loading, error, retry } = useSocialList(category);
   return (
-    <div className="rounded-card border border-border bg-surface p-4">
-      <p className="mb-3 rounded-lg border border-border bg-[var(--hover)] px-3 py-2 text-xs text-secondary" role="status">
-        Simulated social posts — clearly labeled demos, likes persist locally.
-      </p>
+    <div className="rounded-card border border-border bg-card p-5 shadow-card">
       {loading ? (
         <ListSkeleton count={3} />
       ) : error && items.length === 0 ? (
@@ -112,15 +100,17 @@ const SocialFeedWidget = memo(function SocialFeedWidget({ category }: { category
       ) : items.length === 0 ? (
         <EmptyState title="No posts" message="No posts for this interest right now." />
       ) : (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.slice(0, 4).map((p) => (
             <SocialPostCard key={p.id} post={p} />
           ))}
         </div>
       )}
-      <Link href="/social" className="mt-3 block text-sm font-semibold text-accent hover:opacity-90">
-        More posts →
-      </Link>
+      <div className="mt-4 flex justify-end">
+        <Link href="/social" className="text-xs font-semibold text-accent hover:underline">
+          View all posts →
+        </Link>
+      </div>
     </div>
   );
 });
@@ -133,10 +123,9 @@ export default function DashboardPage() {
   const [filter, setFilter] = useState<string | null>(null);
   const [now, setNow] = useState<Date | null>(null);
 
-  // Render the date only after mount: server and browser ICU locales can
-  // format the same date differently, which would cause a hydration mismatch.
   useEffect(() => {
     setNow(new Date());
+    document.title = 'PulseBoard — Overview';
   }, []);
 
   const effectiveCategory = filter ?? categories[0] ?? 'technology';
@@ -164,13 +153,8 @@ export default function DashboardPage() {
 
   const greeting = useMemo(() => greetingForHour(now ? now.getHours() : 12), [now]);
 
-  useEffect(() => {
-    document.title = 'PulseBoard — Overview';
-  }, []);
-
   const newsCategory = personalized ? effectiveCategory : 'technology';
 
-  // Memoize widget map so React elements are stable across renders
   const widgets = useMemo<Record<string, React.ReactNode>>(() => ({
     'personalized-news': <PersonalizedNewsWidget category={newsCategory} />,
     'trending-movies': <TrendingMoviesWidget />,
@@ -185,22 +169,22 @@ export default function DashboardPage() {
   }), [newsCategory, socialCategory]);
 
   return (
-    <div className="mx-auto max-w-7xl">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="mx-auto max-w-6xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-primary sm:text-3xl">
+          <h1 className="text-xl font-bold tracking-tight text-primary sm:text-2xl">
             {greeting}, Guest
           </h1>
-          <p className="mt-1 text-sm text-secondary" suppressHydrationWarning>
+          <p className="mt-0.5 text-xs text-secondary" suppressHydrationWarning>
             {now ? todayLabel(now) : ' '}
           </p>
         </div>
         <button
           type="button"
           onClick={() => dispatch(resetLayout())}
-          className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-secondary transition hover:text-primary"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-secondary transition hover:text-primary hover:border-zinc-500/40"
         >
-          <RotateCcw className="h-4 w-4" aria-hidden="true" /> Reset layout
+          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" /> Reset layout
         </button>
       </div>
 
@@ -208,7 +192,7 @@ export default function DashboardPage() {
         <CategoryFilters selected={personalized ? effectiveCategory : null} onSelect={setFilter} personalized={personalized} />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="mt-6">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
           <SortableContext items={widgetOrder} strategy={verticalListSortingStrategy}>
             <div className="flex min-w-0 flex-col gap-8">
@@ -220,12 +204,6 @@ export default function DashboardPage() {
             </div>
           </SortableContext>
         </DndContext>
-
-        <aside className="flex flex-col gap-4 xl:sticky xl:top-20 xl:self-start" aria-label="Highlights">
-          <TrendingTopicsCard />
-          <FavoritesPreviewCard />
-          <RecommendedCategoriesCard />
-        </aside>
       </div>
     </div>
   );

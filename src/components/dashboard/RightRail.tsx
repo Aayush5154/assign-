@@ -24,9 +24,6 @@ export function TrendingTopicsCard() {
           </li>
         ))}
       </ul>
-      <p className="mt-3 border-t border-border pt-2 text-[11px] text-secondary">
-        Sample topics for demonstration.
-      </p>
     </div>
   );
 }

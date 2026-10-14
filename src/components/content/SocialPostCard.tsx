@@ -2,7 +2,6 @@
 
 import { memo, useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { Heart, Link2 } from 'lucide-react';
 import type { SocialPost } from '@/types/content';
 import { formatRelativeTime } from '@/lib/utils/format';
@@ -40,26 +39,23 @@ const SocialPostCard = memo(function SocialPostCard({ post }: { post: SocialPost
   };
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
+    <article
       id={post.id}
-      className="flex flex-col gap-3 rounded-card border border-border bg-card p-4 shadow-card"
+      className="flex flex-col gap-3 rounded-card border border-border bg-card p-4 shadow-card transition-all duration-200 hover:border-zinc-500/40 hover:shadow-md"
     >
       <div className="flex items-start gap-3">
         {post.avatar ? (
           <Image
             src={post.avatar}
             alt={`${post.author} avatar`}
-            width={40}
-            height={40}
-            className="h-10 w-10 rounded-full object-cover"
+            width={38}
+            height={38}
+            className="h-9 w-9 rounded-full object-cover"
             unoptimized
           />
         ) : (
           <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-accent-fg"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-fg"
             aria-hidden="true"
           >
             {initials(post.author)}
@@ -71,7 +67,7 @@ const SocialPostCard = memo(function SocialPostCard({ post }: { post: SocialPost
             @{post.username} · <time dateTime={post.createdAt}>{formatRelativeTime(post.createdAt)}</time>
           </p>
         </div>
-        <span className="rounded-full bg-[var(--hover)] px-2 py-0.5 text-[11px] font-semibold text-secondary">
+        <span className="text-[10px] text-secondary/60">
           Demo post
         </span>
       </div>
@@ -81,7 +77,7 @@ const SocialPostCard = memo(function SocialPostCard({ post }: { post: SocialPost
       {post.hashtags.length > 0 && (
         <p className="flex flex-wrap gap-1.5" aria-label="Hashtags">
           {post.hashtags.map((tag) => (
-            <span key={tag} className="text-[13px] font-medium text-accent">
+            <span key={tag} className="text-xs font-medium text-accent">
               #{tag}
             </span>
           ))}
@@ -97,13 +93,12 @@ const SocialPostCard = memo(function SocialPostCard({ post }: { post: SocialPost
             sizes="(max-width: 640px) 100vw, 50vw"
             className="object-cover"
             onError={() => setImgError(true)}
-
           />
         </div>
       )}
 
       <div className="flex items-center gap-2 border-t border-border pt-3">
-        <CategoryBadge category={post.category} />
+        <CategoryBadge category={post.category} className="text-[10px]" />
         <div className="ml-auto flex items-center gap-2">
           <button
             type="button"
@@ -111,11 +106,11 @@ const SocialPostCard = memo(function SocialPostCard({ post }: { post: SocialPost
             aria-pressed={liked}
             aria-label={liked ? 'Unlike this post' : 'Like this post'}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-2 text-xs font-semibold transition',
+              'inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium transition',
               liked ? 'border-accent text-accent' : 'text-secondary hover:text-primary',
             )}
           >
-            <Heart className={cn('h-4 w-4', liked && 'fill-current')} aria-hidden="true" />
+            <Heart className={cn('h-3.5 w-3.5', liked && 'fill-current')} aria-hidden="true" />
             {post.likes + (liked ? 1 : 0)}
           </button>
           <FavoriteButton
@@ -131,13 +126,13 @@ const SocialPostCard = memo(function SocialPostCard({ post }: { post: SocialPost
             onClick={copyLink}
             aria-label="Copy link to this post"
             title="Copy link"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-[var(--hover)] text-secondary transition hover:text-primary"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-[var(--hover)] text-secondary transition hover:text-primary"
           >
-            <Link2 className="h-4 w-4" aria-hidden="true" />
+            <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 });
 
