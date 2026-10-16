@@ -35,13 +35,20 @@ A polished, responsive dashboard for discovering **news**, **movies**, and **moc
 
 ## Screenshots
 
-> Placeholders — capture after `npm run dev`:
->
-> - `docs/screenshots/dashboard-dark.png` — overview, dark theme
-> - `docs/screenshots/dashboard-light.png` — overview, light theme
-> - `docs/screenshots/movie-detail.png` — movie details
-> - `docs/screenshots/search.png` — search results
-> - `docs/screenshots/mobile.png` — mobile navigation
+### Dashboard — Dark Theme
+![Dashboard dark mode](docs/screenshots/dashboard-dark.png)
+
+### News
+![News page](docs/screenshots/news.png)
+
+### Movies
+![Movies page](docs/screenshots/movies.png)
+
+### Search Results
+![Search results](docs/screenshots/search.png)
+
+### Settings
+![Settings page](docs/screenshots/settings.png)
 
 ## Project structure
 
