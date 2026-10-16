@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import NewsCard from '@/components/content/NewsCard';
 import MovieCard from '@/components/content/MovieCard';
 import SocialPostCard from '@/components/content/SocialPostCard';
-import { GridSkeleton } from '@/components/common/LoadingSkeleton';
+import { PageSpinner } from '@/components/common/LoadingSkeleton';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
 import type { Movie, NewsArticle, SocialPost } from '@/types/content';
@@ -144,7 +144,7 @@ function SearchInner() {
         {!q ? (
           <EmptyState title="Search everything" message="Try “artificial intelligence”, “Interstellar”, or “markets”." />
         ) : state.loading ? (
-          <GridSkeleton count={6} />
+          <PageSpinner label="Searching…" />
         ) : total === 0 && !state.error ? (
           <EmptyState title="No results" message={`Nothing matched “${q}”. Try different keywords.`} />
         ) : total === 0 ? (
@@ -190,7 +190,7 @@ function SearchInner() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<GridSkeleton count={6} />}>
+    <Suspense fallback={<PageSpinner label="Loading search…" />}>
       <SearchInner />
     </Suspense>
   );

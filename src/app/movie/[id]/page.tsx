@@ -8,7 +8,7 @@ import type { Movie } from '@/types/content';
 import { formatDate } from '@/lib/utils/format';
 import FavoriteButton from '@/components/common/FavoriteButton';
 import MovieCard from '@/components/content/MovieCard';
-import { GridSkeleton } from '@/components/common/LoadingSkeleton';
+import { PageSpinner } from '@/components/common/LoadingSkeleton';
 import ErrorState from '@/components/common/ErrorState';
 
 interface DetailResponse {
@@ -51,10 +51,7 @@ export default function MovieDetailPage({ params }: { params: Promise<{ id: stri
   if (loading) {
     return (
       <div className="mx-auto max-w-6xl">
-        <div className="skeleton h-64 w-full rounded-card" />
-        <div className="mt-6">
-          <GridSkeleton count={3} />
-        </div>
+        <PageSpinner label="Loading movie details…" />
       </div>
     );
   }

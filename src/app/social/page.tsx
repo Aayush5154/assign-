@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { CATEGORIES } from '@/lib/constants/categories';
 import SocialPostCard from '@/components/content/SocialPostCard';
-import { ListSkeleton } from '@/components/common/LoadingSkeleton';
+import { PageSpinner } from '@/components/common/LoadingSkeleton';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
 import LoadMoreTrigger from '@/components/common/LoadMoreTrigger';
@@ -51,7 +51,7 @@ export default function SocialPage() {
 
       <div className="mt-6">
         {loading ? (
-          <ListSkeleton count={5} />
+          <PageSpinner label="Loading posts…" />
         ) : error && items.length === 0 ? (
           <ErrorState title="Could not load posts" message={error} onRetry={retry} />
         ) : items.length === 0 ? (

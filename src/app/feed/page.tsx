@@ -7,7 +7,7 @@ import CategoryFilters from '@/components/dashboard/CategoryFilters';
 import NewsCard from '@/components/content/NewsCard';
 import MovieCard from '@/components/content/MovieCard';
 import SocialPostCard from '@/components/content/SocialPostCard';
-import { GridSkeleton, ListSkeleton } from '@/components/common/LoadingSkeleton';
+import { PageSpinner } from '@/components/common/LoadingSkeleton';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
 import LoadMoreTrigger from '@/components/common/LoadMoreTrigger';
@@ -71,9 +71,8 @@ function FeedInner() {
       </div>
 
       {loading ? (
-        <div className="mt-6 space-y-6">
-          <GridSkeleton count={6} />
-          <ListSkeleton count={2} />
+        <div className="mt-6">
+          <PageSpinner label="Loading feed…" />
         </div>
       ) : empty ? (
         <div className="mt-6">
@@ -155,7 +154,7 @@ function FeedInner() {
 
 export default function FeedPage() {
   return (
-    <Suspense fallback={<GridSkeleton count={6} />}>
+    <Suspense fallback={<PageSpinner label="Loading feed…" />}>
       <FeedInner />
     </Suspense>
   );

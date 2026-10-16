@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import MovieCard from '@/components/content/MovieCard';
-import { GridSkeleton } from '@/components/common/LoadingSkeleton';
+import { PageSpinner } from '@/components/common/LoadingSkeleton';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
 import LoadMoreTrigger from '@/components/common/LoadMoreTrigger';
@@ -43,7 +43,7 @@ export default function MoviesPage() {
 
       <div className="mt-6">
         {loading ? (
-          <GridSkeleton count={9} />
+          <PageSpinner label="Loading movies…" />
         ) : error && items.length === 0 ? (
           <ErrorState title="Could not load movies" message={error} onRetry={retry} />
         ) : items.length === 0 ? (

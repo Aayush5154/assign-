@@ -40,12 +40,17 @@ export function usePaginatedList<T>(buildUrl: (page: number) => string, depsKey:
     error: null,
   });
   const requestId = useRef(0);
-  const inFlight = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   const load = useCallback(
     async (page: number, append: boolean) => {
-      if (inFlight.current) return;
-      inFlight.current = true;
+      // Abort any previous in-flight request so we're never blocked
+      if (abortRef.current) {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
+      const ctrl = new AbortController();
+      abortRef.current = ctrl;
       const myId = ++requestId.current;
       setState((s) => ({
         ...s,
@@ -54,7 +59,6 @@ export function usePaginatedList<T>(buildUrl: (page: number) => string, depsKey:
         error: append ? null : s.error,
       }));
       try {
-        const ctrl = new AbortController();
         const data = await fetchJson<PaginatedResponse<T>>(buildUrl(page), ctrl.signal);
         if (requestId.current !== myId) return; // outdated response
         setState((s) => ({
@@ -67,19 +71,14 @@ export function usePaginatedList<T>(buildUrl: (page: number) => string, depsKey:
           error: data.error ?? null,
         }));
       } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
         if (requestId.current !== myId) return;
-        if ((err as Error).name === 'AbortError') {
-          inFlight.current = false;
-          return;
-        }
         setState((s) => ({
           ...s,
           loading: false,
           loadingMore: false,
-          error: append && s.items.length > 0 ? (err as Error).message : (err as Error).message,
+          error: (err as Error).message,
         }));
-      } finally {
-        inFlight.current = false;
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,7 +86,6 @@ export function usePaginatedList<T>(buildUrl: (page: number) => string, depsKey:
   );
 
   useEffect(() => {
-    requestId.current += 1; // invalidate previous
     setState({
       items: [],
       page: 0,
@@ -98,6 +96,13 @@ export function usePaginatedList<T>(buildUrl: (page: number) => string, depsKey:
       error: null,
     });
     void load(1, false);
+    return () => {
+      // Abort on unmount or dependency change
+      if (abortRef.current) {
+        abortRef.current.abort();
+        abortRef.current = null;
+      }
+    };
   }, [load]);
 
   const loadMore = useCallback(() => {

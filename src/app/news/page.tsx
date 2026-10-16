@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { CATEGORIES } from '@/lib/constants/categories';
 import { useAppSelector } from '@/store/hooks';
 import NewsCard from '@/components/content/NewsCard';
-import { GridSkeleton } from '@/components/common/LoadingSkeleton';
+import { PageSpinner } from '@/components/common/LoadingSkeleton';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
 import LoadMoreTrigger from '@/components/common/LoadMoreTrigger';
@@ -45,7 +45,7 @@ export default function NewsPage() {
 
       <div className="mt-6">
         {loading ? (
-          <GridSkeleton count={9} />
+          <PageSpinner label="Loading news…" />
         ) : error && items.length === 0 ? (
           <ErrorState title="Could not load news" message={error} onRetry={retry} />
         ) : items.length === 0 ? (

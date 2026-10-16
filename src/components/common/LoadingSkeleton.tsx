@@ -41,3 +41,13 @@ export function ListSkeleton({ count = 5 }: { count?: number }) {
     </div>
   );
 }
+
+/** Full-page centered circular spinner for initial page loads. */
+export function PageSpinner({ label = 'Loading…' }: { label?: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-32" role="status" aria-label={label}>
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-border border-t-accent" />
+      <p className="mt-4 text-sm font-medium text-secondary">{label}</p>
+    </div>
+  );
+}
